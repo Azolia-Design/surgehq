@@ -331,22 +331,24 @@ const mainScript = () => {
       }
 
       $card.forEach(function (item) {
-        item.addEventListener("mouseenter", () => {
-          bounds = item.getBoundingClientRect();
-          item.addEventListener("mousemove", function (e) {
-            rotateToMouse(e, item);
+        if ($(window).width() > 991) {
+          item.addEventListener("mouseenter", () => {
+            bounds = item.getBoundingClientRect();
+            item.addEventListener("mousemove", function (e) {
+              rotateToMouse(e, item);
+            });
           });
-        });
 
-        item.addEventListener("mouseleave", () => {
-          gsap.to(item, {
-            rotationX: 0,
-            rotationY: 0,
-            backgroundImage: "",
-            duration: 0.05,
-            ease: "power3.out",
+          item.addEventListener("mouseleave", () => {
+            gsap.to(item, {
+              rotationX: 0,
+              rotationY: 0,
+              backgroundImage: "",
+              duration: 0.05,
+              ease: "power3.out",
+            });
           });
-        });
+        }
       });
 
       function pickColorLineCard() {
@@ -372,15 +374,15 @@ const mainScript = () => {
           rotate: 0,
           slideShadows: true,
         },
-        slidesPerView: 1,
+        slidesPerView: 1.1,
         breakpoints: {
           768: {
-            slidesPerView: 2,
             spaceBetween: parseRem(16),
+            slidesPerView: "auto",
           },
           991: {
-            slidesPerView: 4,
             spaceBetween: parseRem(20),
+            slidesPerView: "auto",
           },
         },
         navigation: {
@@ -398,12 +400,11 @@ const mainScript = () => {
 
       let mainSwiper = new Swiper(".home-casestudy-gallery-slider-cms", {
         slidesPerView: 1,
-        initialSlide: 1,
-        breakpoints: {
-          768: {
-            initialSlide: 3,
-          },
-        },
+        initialSlide: 3,
+        loop: true,
+        watchSlidesProgress: true,
+        slideToClickedSlide: true,
+        centeredSlides: true,
         effect: "fade",
         fadeEffect: {
           crossFade: true,
@@ -412,18 +413,16 @@ const mainScript = () => {
       mainSwiper.detachEvents();
 
       let thumbSwiper = new Swiper(".home-casestudy-gallery-thumbs-cms", {
-        initialSlide: 1,
+        initialSlide: 3,
         loop: true,
         slidesPerView: 5,
-        centeredSlides: false,
         watchSlidesProgress: true,
         slideToClickedSlide: true,
+        centeredSlides: true,
         loopAdditionalSlides: 5,
         breakpoints: {
           768: {
             slidesPerView: 7,
-            initialSlide: 3,
-            centeredSlides: true,
             loopAdditionalSlides: 7,
           },
         },
@@ -479,9 +478,9 @@ const mainScript = () => {
         ).innerHtml += `<div class="swiper-pagination"></div>`;
 
         let swiper = new Swiper(".home-testi-slider", {
-          slidesPerView: 1,
+          slidesPerView: "auto",
           grabCursor: true,
-          spaceBetween: parseRem(18),
+          spaceBetween: parseRem(16),
           pagination: {
             el: ".home-testi-slider-pagination",
             clickable: true,
@@ -511,7 +510,10 @@ const mainScript = () => {
             scrub: true,
           },
         });
-        tlScroll.to(".home-testi-slider-list", { y: -distance, ease: "none" });
+        gsap.set(".home-testi-progress-inner", { height: '0%', duration: 0 });
+        tlScroll
+          .to(".home-testi-slider-list", { y: -distance, ease: "none", duration: 1 })
+          .to(".home-testi-progress-inner", { height: '100%', ease: "none", duration: 1 }, 0);
 
         $(window).on("resize", function () {
           centerGap =
@@ -540,7 +542,7 @@ const mainScript = () => {
       $(".home-paper-list").addClass("swiper-wrapper");
       $(".home-paper-item-wrap").addClass("swiper-slide");
       var swiperPaper = new Swiper(".home-paper-cms", {
-        slidesPerView: 1,
+        slidesPerView: "auto",
         spaceBetween: parseRem(16),
         on: {
           slideChange: function () {
