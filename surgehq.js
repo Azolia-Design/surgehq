@@ -382,7 +382,7 @@ const mainScript = () => {
           },
           991: {
             spaceBetween: parseRem(20),
-            slidesPerView: "auto",
+            slidesPerView: 4,
           },
         },
         navigation: {
@@ -510,10 +510,10 @@ const mainScript = () => {
             scrub: true,
           },
         });
-        gsap.set(".home-testi-progress-inner", { height: '0%', duration: 0 });
+        let progDistance = $('.home-testi-progress').height() - $('.home-testi-progress-inner').height();
         tlScroll
           .to(".home-testi-slider-list", { y: -distance, ease: "none", duration: 1 })
-          .to(".home-testi-progress-inner", { height: '100%', ease: "none", duration: 1 }, 0);
+          .to(".home-testi-progress-inner", { y: progDistance, ease: "none", duration: 1 }, 0);
 
         $(window).on("resize", function () {
           centerGap =
