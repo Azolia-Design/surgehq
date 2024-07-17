@@ -17,7 +17,6 @@ const mainScript = () => {
       rect.right <= (window.innerWidth || document.documentElement.clientWidth)
     );
   }
-  const lerp = (x, y, a) => x * (1 - a) + y * a;
 
   //End Utils
 
@@ -124,10 +123,12 @@ const mainScript = () => {
         .not($(this).siblings(".footer-menu-list-inner"))
         .slideUp()
         .removeClass("active");
+
+      $(".footer-menu-list-title-wrap").not($(this)).removeClass("active");
+      $(this).toggleClass("active");
+
       var submenu = $(this).siblings(".footer-menu-list-inner");
       submenu.toggleClass("active");
-
-      $(this).toggleClass("active");
 
       if (!submenu.hasClass("active")) {
         submenu.slideUp();
@@ -183,7 +184,6 @@ const mainScript = () => {
           .each(function (index, item) {
             var txt = $(this).text();
             titArray.push(txt);
-            console.log(titArray);
             this.remove();
           })
           .promise()
@@ -391,6 +391,11 @@ const mainScript = () => {
     }
 
     function homeCaseStudy() {
+      let mainChild = $(".home-casestudy-gallery-wrap").children().clone();
+      $(".home-casestudy-gallery-wrap").append(mainChild);
+      let child = $(".home-casestudy-gallery-thumbs-wrap").children().clone();
+      $(".home-casestudy-gallery-thumbs-wrap").append(child);
+
       let mainSwiper = new Swiper(".home-casestudy-gallery-slider-cms", {
         slidesPerView: 1,
         initialSlide: 1,
@@ -408,16 +413,18 @@ const mainScript = () => {
 
       let thumbSwiper = new Swiper(".home-casestudy-gallery-thumbs-cms", {
         initialSlide: 1,
-        // loop: true,
+        loop: true,
         slidesPerView: 5,
         centeredSlides: false,
         watchSlidesProgress: true,
         slideToClickedSlide: true,
+        loopAdditionalSlides: 5,
         breakpoints: {
           768: {
             slidesPerView: 7,
             initialSlide: 3,
             centeredSlides: true,
+            loopAdditionalSlides: 7,
           },
         },
         navigation: {
@@ -457,151 +464,6 @@ const mainScript = () => {
         $(item).find(".customer-marquee-inner").append(list2).append(list3);
       });
     }
-    // let isRunning = true;
-    // function homeTesti() {
-    //   const scrollingText = gsap.utils.toArray(".home-testi-slider-item");
-
-    //   const tl = verticalLoop(scrollingText, {
-    //     repeat: -1,
-    //     paddingBottom: parseRem(20),
-    //   });
-
-    //   const testiSlider = document.querySelector(".home-testi-slider");
-
-    //   Observer.create({
-    //     target: testiSlider,
-    //     onChangeY(self) {
-    //       let factor = 2.5;
-    //       if (self.deltaY < 0) {
-    //         factor *= -1;
-    //       }
-    //       gsap
-    //         .timeline({
-    //           defaults: {
-    //             ease: "none",
-    //           },
-    //         })
-    //         .to(tl, { timeScale: factor * 2.5, duration: 0.2 })
-    //         .to(tl, { timeScale: factor / 2.5, duration: 1 }, "+=0.3");
-    //     },
-    //   });
-
-    //   function verticalLoop(items, config) {
-    //     items = gsap.utils.toArray(items);
-    //     config = config || {};
-    //     let tl = gsap.timeline({
-    //       repeat: config.repeat,
-    //       paused: config.paused,
-    //       defaults: { ease: "none" },
-    //       onReverseComplete: () =>
-    //         tl.totalTime(tl.rawTime() + tl.duration() * 100),
-    //     }),
-    //       length = items.length,
-    //       startY = items[0].offsetTop,
-    //       times = [],
-    //       heights = [],
-    //       yPercents = [],
-    //       curIndex = 0,
-    //       pixelsPerSecond = (config.speed || 1) * 100,
-    //       snap =
-    //         config.snap === false
-    //           ? (v) => v
-    //           : gsap.utils.snap(config.snap || 1), // some browsers shift by a pixel to accommodate flex layouts, so for example if width is 20% the first element's width might be 242px, and the next 243px, alternating back and forth. So we snap to 5 percentage points to make things look more natural
-    //       totalHeight,
-    //       curY,
-    //       distanceToStart,
-    //       distanceToLoop,
-    //       item,
-    //       i;
-    //     gsap.set(items, {
-    //       // convert "x" to "xPercent" to make things responsive, and populate the heights/yPercents Arrays to make lookups faster.
-    //       yPercent: (i, el) => {
-    //         let w = (heights[i] = parseFloat(
-    //           gsap.getProperty(el, "height", "px")
-    //         ));
-    //         yPercents[i] = snap(
-    //           (parseFloat(gsap.getProperty(el, "y", "px")) / w) * 100 +
-    //           gsap.getProperty(el, "yPercent")
-    //         );
-    //         return yPercents[i];
-    //       },
-    //     });
-    //     gsap.set(items, { y: 0 });
-    //     totalHeight =
-    //       items[length - 1].offsetTop +
-    //       (yPercents[length - 1] / 100) * heights[length - 1] -
-    //       startY +
-    //       items[length - 1].offsetHeight *
-    //       gsap.getProperty(items[length - 1], "scaleY") +
-    //       (parseFloat(config.paddingBottom) || 0);
-    //     for (i = 0; i < length; i++) {
-    //       item = items[i];
-    //       curY = (yPercents[i] / 100) * heights[i];
-    //       distanceToStart = item.offsetTop + curY - startY;
-    //       distanceToLoop =
-    //         distanceToStart + heights[i] * gsap.getProperty(item, "scaleY");
-    //       tl.to(
-    //         item,
-    //         {
-    //           yPercent: snap(((curY - distanceToLoop) / heights[i]) * 100),
-    //           duration: distanceToLoop / pixelsPerSecond,
-    //         },
-    //         0
-    //       )
-    //         .fromTo(
-    //           item,
-    //           {
-    //             yPercent: snap(
-    //               ((curY - distanceToLoop + totalHeight) / heights[i]) * 100
-    //             ),
-    //           },
-    //           {
-    //             yPercent: yPercents[i],
-    //             duration:
-    //               (curY - distanceToLoop + totalHeight - curY) /
-    //               pixelsPerSecond,
-    //             immediateRender: false,
-    //           },
-    //           distanceToLoop / pixelsPerSecond
-    //         )
-    //         .add("label" + i, distanceToStart / pixelsPerSecond);
-    //       times[i] = distanceToStart / pixelsPerSecond;
-    //     }
-    //     function toIndex(index, vars) {
-    //       vars = vars || {};
-    //       Math.abs(index - curIndex) > length / 2 &&
-    //         (index += index > curIndex ? -length : length); // always go in the shortest direction
-    //       let newIndex = gsap.utils.wrap(0, length, index),
-    //         time = times[newIndex];
-    //       if (time > tl.time() !== index > curIndex) {
-    //         // if we're wrapping the timeline's playhead, make the proper adjustments
-    //         vars.modifiers = { time: gsap.utils.wrap(0, tl.duration()) };
-    //         time += tl.duration() * (index > curIndex ? 1 : -1);
-    //       }
-    //       curIndex = newIndex;
-    //       vars.overwrite = true;
-    //       return tl.tweenTo(time, vars);
-    //     }
-    //     tl.next = (vars) => toIndex(curIndex + 1, vars);
-    //     tl.previous = (vars) => toIndex(curIndex - 1, vars);
-    //     tl.current = () => curIndex;
-    //     tl.toIndex = (index, vars) => toIndex(index, vars);
-    //     tl.times = times;
-    //     tl.progress(1, true).progress(0, true); // pre-render for performance
-    //     if (config.reversed) {
-    //       tl.vars.onReverseComplete();
-    //       tl.reverse();
-    //     }
-    //     return tl;
-    //   }
-    //   if(isRunning){
-    //     requestAnimationFrame(homeTesti);
-    //   }
-    // }
-    // function startHomeTesti() {
-    //   isRunning = true;
-    //   homeTesti();
-    // }
 
     function stopHomeTesti() {
       isRunning = false;
@@ -700,7 +562,6 @@ const mainScript = () => {
     homePaper();
     homeCaseStudy();
     homeCustomer();
-    // homeTesti();
     homeTestiNew();
     homeBlog();
     globalMarquee();
