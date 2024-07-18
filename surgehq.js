@@ -178,6 +178,33 @@ const mainScript = () => {
     }
 
     function homeHero() {
+      const titleTop = new SplitType($(".home-hero-title-top"), { types: "lines, words", lineClass: "bp-line", });
+      const titleBot = new SplitType($(".home-hero-title-bot"), { types: "lines, words", lineClass: "bp-line", });
+      const homeHeroImg = $(".home-hero-img");
+      const homeTabItem = $(".home-hero-tab-item-wrap");
+      const homeTabItemTxt = $(".home-hero-tab-content-txt");
+      
+      gsap.set([...titleTop.words, ...titleBot.words], { yPercent: 100 });
+      gsap.set([...homeHeroImg, ...homeTabItem, ...homeTabItemTxt], { opacity: 0, yPercent: 5 });
+
+      let tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".main",
+          start: "top top+=10%",
+          once: true,
+        },
+        defaults: { ease: "power1.out" },
+        onComplete: () => {
+          // SplitType.revert(".home-hero-img, .home-hero-tab-item-wrap, .home-hero-tab-content-txt");
+        },
+      });
+
+      tl.to(titleTop.words, { yPercent: 0, duration: 0.5, stagger: 0.08 })
+      .to(titleBot.words, { yPercent: 0, duration: 0.5, stagger: 0.08 })
+      .to(homeHeroImg, { yPercent: 0, opacity: 1, duration: 0.6, stagger: 0.1 })
+      .to(homeTabItemTxt, { yPercent: 0, opacity: 1, duration: 0.5, stagger: 0.08 })
+      .to(homeTabItem, { yPercent: 0, opacity: 1, duration: 0.5, stagger: 0.08 })
+
       function slider() {
         let titArray = [];
         $(".home-hero-tab-content-txt > .home-hero-content-tab-item")
@@ -330,27 +357,6 @@ const mainScript = () => {
         // `;
       }
 
-      $card.forEach(function (item) {
-        if ($(window).width() > 991) {
-          item.addEventListener("mouseenter", () => {
-            bounds = item.getBoundingClientRect();
-            item.addEventListener("mousemove", function (e) {
-              rotateToMouse(e, item);
-            });
-          });
-
-          item.addEventListener("mouseleave", () => {
-            gsap.to(item, {
-              rotationX: 0,
-              rotationY: 0,
-              backgroundImage: "",
-              duration: 0.05,
-              ease: "power3.out",
-            });
-          });
-        }
-      });
-
       function pickColorLineCard() {
         let $colorLine = document.querySelectorAll(
           ".home-paper-item-line-def-color"
@@ -364,6 +370,68 @@ const mainScript = () => {
       }
 
       pickColorLineCard();
+
+      ScrollTrigger.create({
+        trigger: '.home-paper',
+        start: 'top bottom',
+        end: 'bottom top',
+        once: true,
+        onEnter: () => {
+          setup()
+        }
+      })
+
+      function setup() {
+        const headingLeft = new SplitType($(".home-paper-heading-left"), { types: "lines, words", lineClass: "bp-line", });
+        const headingRight = new SplitType(".home-paper-heading-right-txt", { types: "lines", lineClass: "paper-line"});
+        const headingRightMask = new SplitType(".paper-line", { types: "lines", lineClass: "line-child"});
+
+        gsap.set([...headingLeft.words, ...headingRightMask.lines], { yPercent: 100 });
+        gsap.set([...$card], {transformOrigin: "center center", x: -40, rotateY: -10, opacity: 0});
+
+        let tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".home-paper",
+            start: "top top+=10%",
+            once: true,
+          },
+          defaults: { ease: "power1.out" },
+          onComplete: () => {
+          },
+        });
+
+        tl.to(headingLeft.words, { yPercent: 0, duration: 0.5, stagger: 0.08 })
+        .to(headingRightMask.lines, { yPercent: 0, duration: 0.5, stagger: 0.1 })
+        .to($card, {
+          x: 0,
+          rotateY: 0,
+          opacity: 1,
+          ease: "expo.out",
+          stagger: 0.1,
+          duration: 2.3,
+          force3D: true,})
+
+        $card.forEach(function (item) {
+          if ($(window).width() > 991) {
+            item.addEventListener("mouseenter", () => {
+              bounds = item.getBoundingClientRect();
+              item.addEventListener("mousemove", function (e) {
+                rotateToMouse(e, item);
+              });
+            });
+  
+            item.addEventListener("mouseleave", () => {
+              gsap.to(item, {
+                rotationX: 0,
+                rotationY: 0,
+                backgroundImage: "",
+                duration: 0.05,
+                ease: "power3.out",
+              });
+            });
+          }
+        });
+      }
     }
 
     function homeBlog() {
@@ -510,10 +578,20 @@ const mainScript = () => {
             scrub: true,
           },
         });
-        let progDistance = $('.home-testi-progress').height() - $('.home-testi-progress-inner').height();
+        let progDistance =
+          $(".home-testi-progress").height() -
+          $(".home-testi-progress-inner").height();
         tlScroll
-          .to(".home-testi-slider-list", { y: -distance, ease: "none", duration: 1 })
-          .to(".home-testi-progress-inner", { y: progDistance, ease: "none", duration: 1 }, 0);
+          .to(".home-testi-slider-list", {
+            y: -distance,
+            ease: "none",
+            duration: 1,
+          })
+          .to(
+            ".home-testi-progress-inner",
+            { y: progDistance, ease: "none", duration: 1 },
+            0
+          );
 
         $(window).on("resize", function () {
           centerGap =
@@ -559,6 +637,15 @@ const mainScript = () => {
         swiperPaper.slideNext();
       });
     }
+
+    function footerForm() {
+      $(document).on("submit", "#email-form", function () {
+        $("#email-form")[0].reset();
+        setTimeout(() => {
+          $(".w-form-done").css("display", "none");
+        }, 7000);
+      });
+    }
     homeHero();
     homeAbout();
     homePaper();
@@ -567,6 +654,7 @@ const mainScript = () => {
     homeTestiNew();
     homeBlog();
     globalMarquee();
+    footerForm();
     if ($(window).width() < 767) {
       homePaperMob();
     }
